@@ -1,0 +1,60 @@
+# {{ ansible_managed }}
+
+# Note: systemd service expects redis to daemonise
+daemonize yes
+
+pidfile {{ redis_instance_pid_path }}/{{ redis_instance_name }}.pid
+port {{ redis_instance_port }}
+bind {{ redis_instance_bind_interface }}
+
+{% if redis_instance_unixsocket %}
+unixsocket {{ redis_instance_pid_path }}/{{ redis_instance_name }}.sock
+unixsocketperm {{ redis_instance_unixsocket_perms }}
+{% endif %}
+
+supervised systemd
+timeout {{ redis_instance_timeout }}
+
+loglevel {{ redis_instance_log_level }}
+logfile {{ redis_instance_log_path|ternary(redis_instance_log_path~'/'~redis_instance_name~'.log','') }}
+
+{% if redis_instance_syslog_enabled %}
+syslog-enabled {{ redis_instance_syslog_enabled }}
+syslog-ident redis-{{ redis_instance_name }}
+syslog-facility {{ redis_instance_syslog_facility }}
+{% endif %}
+
+databases {{ redis_instance_databases }}
+
+{% for save in redis_instance_save %}
+save {{ save }}
+{% endfor %}
+
+rdbcompression {{ redis_instance_rdbcompression }}
+dbfilename {{ redis_instance_rdbfilename }}
+dir {{ redis_instance_data_path }}/{{ redis_instance_name }}
+
+# maxclients 128
+
+{% if redis_instance_maxmemory %}
+maxmemory {{ redis_instance_maxmemory }}
+maxmemory-policy {{ redis_instance_maxmemory_policy }}
+maxmemory-samples {{ redis_instance_maxmemory_samples }}
+{% endif %}
+
+appendonly {{ redis_instance_appendonly }}
+appendfsync {{ redis_instance_appendfsync }}
+no-appendfsync-on-rewrite no
+aof-use-rdb-preamble yes
+
+{% for include in redis_instance_includes %}
+include {{ include }}
+{% endfor %}
+
+{% if redis_instance_requirepass %}
+requirepass {{ redis_instance_requirepass }}
+{% endif %}
+
+{% for redis_instance_disabled_command in redis_instance_disabled_commands %}
+rename-command {{ redis_instance_disabled_command }} ""
+{% endfor %}

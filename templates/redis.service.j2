@@ -1,0 +1,31 @@
+[Unit]
+Description=Advanced key-value store
+After=network.target
+Documentation=http://redis.io/documentation, man:redis-server(1)
+
+[Service]
+Type=forking
+ExecStart={{ redis_instance_server_bin }} {{ redis_instance_conf_path }}/{{ redis_instance_name }}.conf
+ExecStop=/bin/kill -s TERM $MAINPID
+PIDFile={{ redis_instance_pid_path }}/{{ redis_instance_name }}.pid
+TimeoutStopSec=0
+Restart=always
+User={{ redis_instance_user }}
+Group={{ redis_instance_group }}
+RuntimeDirectory={{ redis_instance_pid_path|basename }}
+RuntimeDirectoryMode=2755
+UMask=007
+PrivateTmp=yes
+LimitNOFILE=65535
+PrivateDevices=yes
+ProtectHome=yes
+ReadOnlyDirectories=/
+ReadWriteDirectories=-{{ redis_instance_data_path }}/{{ redis_instance_name }}
+ReadWriteDirectories=-{{ redis_instance_log_path }}
+ReadWriteDirectories=-{{ redis_instance_pid_path }}
+CapabilityBoundingSet=~CAP_SYS_PTRACE
+ProtectSystem=true
+ReadWriteDirectories=-{{ redis_instance_conf_path }}
+
+[Install]
+WantedBy=multi-user.target redis.target

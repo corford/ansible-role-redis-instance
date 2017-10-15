@@ -1,0 +1,59 @@
+---
+redis_instance_name: "instance1"
+redis_instance_conf_path: "/etc/redis"
+redis_instance_data_path: "/var/lib/redis"
+redis_instance_log_path: "/var/log/redis"
+redis_instance_pid_path: "/run/redis"
+
+redis_instance_user: "redis"
+redis_instance_group: "redis"
+redis_instance_port: 6379
+redis_instance_bind_interface: "127.0.0.1"
+redis_instance_unixsocket: yes
+redis_instance_unixsocket_perms: 777
+redis_instance_timeout: 300
+
+redis_instance_log_level: "notice"
+redis_instance_syslog_enabled: no
+redis_instance_syslog_facility: "local0"
+
+redis_instance_databases: 16
+
+# Set to an empty list to disable persistence (saving the DB to disk)
+redis_instance_save:
+  - "900 1"
+  - "300 10"
+  - "60 10000"
+
+redis_instance_rdbcompression: "yes"
+redis_instance_rdbfilename: "dump.rdb"
+
+redis_instance_maxmemory: 0
+redis_instance_maxmemory_policy: "noeviction"
+redis_instance_maxmemory_samples: 5
+
+redis_instance_appendonly: "no"
+redis_instance_appendfsync: "everysec"
+
+# Add extra include files for local configuration/overrides.
+redis_instance_includes: []
+
+# Require authentication to Redis with a password (note: for maximum security this var should be overridden with a vault encrypted include)
+redis_instance_requirepass: ""
+
+# Disable certain Redis commands for security reasons.
+redis_instance_disabled_commands: []
+#  - FLUSHDB
+#  - FLUSHALL
+#  - KEYS
+#  - PEXPIRE
+#  - DEL
+#  - CONFIG
+#  - SHUTDOWN
+#  - BGREWRITEAOF
+#  - BGSAVE
+#  - SAVE
+#  - SPOP
+#  - SREM
+#  - RENAME
+#  - DEBUG
