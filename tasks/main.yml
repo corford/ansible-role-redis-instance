@@ -30,7 +30,7 @@
   tags: ['redis', 'redis_instance']
 
 - name: Redis | Ensure pid dir exists
-  file: path={{ redis_instance_pid_path }} state=directory mode=2750
+  file: path={{ redis_instance_pid_path }} state=directory mode=2750 owner={{ redis_instance_user }} group={{ redis_instance_group }}
   tags: ['redis', 'redis_instance']
 
 - name: Redis | Ensure log dir exists
