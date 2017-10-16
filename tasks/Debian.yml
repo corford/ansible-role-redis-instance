@@ -1,0 +1,31 @@
+---
+- name: Redis | Disable Transparent Huge Pages (now)
+  shell: >
+    echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  args:
+    executable: /bin/bash
+  tags: ['redis', 'redis_instance']
+
+- name: Redis | Disable Transparent Huge Pages (across reboots)
+  lineinfile:
+    path: /etc/rc.local
+    line: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+    insertbefore: "^exit 0"
+    mode: 0755
+    state: present
+    backup: yes
+  tags: ['redis', 'redis_instance']
+
+- name: Redis | Enable overcommit memory (now)
+  shell: >
+    sysctl vm.overcommit_memory=1
+  args:
+    executable: /bin/bash
+  tags: ['redis', 'redis_instance']
+
+- name: Redis | Enable overcommit memory (across reboots)
+  template:
+    src: 60-redis.conf.j2
+    dest: "/etc/sysctl.d//60-redis.conf"
+    mode: 0644
+  tags: ['redis', 'redis_instance']

@@ -2,10 +2,12 @@
 - stat:
     path: "{{ redis_instance_server_bin }}"
   register: redis_instance_server_check
+  tags: ['redis', 'redis_instance']
 
 - fail:
     msg: "Redis | Couldn't find redis-server binary"
   when: not redis_instance_server_check.stat.exists
+  tags: ['redis', 'redis_instance']
 
 - name: Redis | Ensure group exists
   group: name={{ redis_instance_group }} state=present
@@ -16,9 +18,16 @@
     name: "{{ redis_instance_user }}"
     shell: /bin/true
     group: "{{ redis_instance_group }}"
-    home: "{{ redis_instance_data_path }}"
+    home: "/dev/null"
     createhome: no
     state: present
+  tags: ['redis', 'redis_instance']
+
+- name: Redis | Include OS-specific tasks
+  include_tasks: "{{ ansible_os_family }}.yml"
+  with_first_found:
+    - "{{ ansible_os_family }}.yml"
+    - "empty.yml"
   tags: ['redis', 'redis_instance']
 
 - name: Redis | Ensure conf dir exists
@@ -26,11 +35,11 @@
   tags: ['redis', 'redis_instance']
 
 - name: Redis | Ensure data dir exists
-  file: path={{ redis_instance_data_path }}/{{ redis_instance_name }} state=directory mode=0750 owner={{ redis_instance_user }} group={{ redis_instance_group }}
+  file: path={{ redis_instance_data_path }} state=directory mode=0750 owner={{ redis_instance_user }} group={{ redis_instance_group }}
   tags: ['redis', 'redis_instance']
 
 - name: Redis | Ensure pid dir exists
-  file: path={{ redis_instance_pid_path }} state=directory mode=2750 owner={{ redis_instance_user }} group={{ redis_instance_group }}
+  file: path={{ redis_instance_pid_path }} state=directory mode=2755 owner={{ redis_instance_user }} group={{ redis_instance_group }}
   tags: ['redis', 'redis_instance']
 
 - name: Redis | Ensure log dir exists
@@ -43,6 +52,16 @@
     dest: "{{ redis_instance_conf_path }}/{{ redis_instance_name }}.conf"
     mode: 0644
   register: redis_instance_conf
+  tags: ['redis', 'redis_instance']
+
+- stat:
+    path: "{{ redis_instance_systemd_target_file }}"
+  register: redis_instance_target_check
+  tags: ['redis', 'redis_instance']
+
+- debug:
+    msg: "Warning: systemd service will not be part of a target group ({{ redis_instance_systemd_target_file }} does not exist)"
+  when: not redis_instance_target_check.stat.exists
   tags: ['redis', 'redis_instance']
 
 - name: Redis | Write systemd service file "redis-{{ redis_instance_name }}.service"
@@ -75,4 +94,3 @@
     daemon_reload: yes
   when: redis_instance_service|changed
   tags: ['redis', 'redis_instance']
-  

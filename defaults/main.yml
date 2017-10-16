@@ -1,7 +1,7 @@
 ---
 redis_instance_name: "instance1"
 redis_instance_conf_path: "/etc/redis"
-redis_instance_data_path: "/var/lib/redis"
+redis_instance_data_path: "/var/lib/redis/{{ redis_instance_name }}"
 redis_instance_log_path: "/var/log/redis"
 redis_instance_pid_path: "/run/redis"
 

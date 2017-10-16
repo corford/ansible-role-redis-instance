@@ -1,2 +1,3 @@
 ---
 redis_instance_server_bin: "/usr/bin/redis-server"
+redis_instance_systemd_target_file: "/etc/systemd/system/redis.target"
