@@ -8,7 +8,7 @@ redis_instance_pid_path: "/run/redis"
 redis_instance_user: "redis"
 redis_instance_group: "redis"
 redis_instance_port: 6379
-redis_instance_bind_interface: "127.0.0.1"
+redis_instance_host: "127.0.0.1"
 redis_instance_unixsocket: yes
 redis_instance_unixsocket_perms: 770
 redis_instance_timeout: 300
