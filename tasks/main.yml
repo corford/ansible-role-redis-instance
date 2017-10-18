@@ -79,18 +79,10 @@
     enabled: yes
   tags: ['redis', 'redis_instance']
 
-- name: Redis | Reload
-  systemd:
-    name: "redis-{{ redis_instance_name }}.service"
-    state: reloaded
-    daemon_reload: yes
-  when: (not redis_instance_service|changed) and redis_instance_conf|changed
-  tags: ['redis', 'redis_instance']
-
 - name: Redis | Restart
   systemd:
     name: "redis-{{ redis_instance_name }}.service"
     state: restarted
     daemon_reload: yes
-  when: redis_instance_service|changed
+  when: redis_instance_service|changed or redis_instance_conf|changed
   tags: ['redis', 'redis_instance']
