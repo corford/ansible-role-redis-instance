@@ -5,7 +5,7 @@ daemonize yes
 
 pidfile {{ redis_instance_pid_path }}/{{ redis_instance_name }}.pid
 port {{ redis_instance_port }}
-bind {{ redis_instance_bind_interface }}
+bind {{ redis_instance_host }}
 
 {% if redis_instance_unixsocket %}
 unixsocket {{ redis_instance_pid_path }}/{{ redis_instance_name }}.sock
